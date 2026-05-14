@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>石头科技 618 小红书文案生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8e53 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #ff2442 0%, #ff6b9d 100%);
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+        }
+        
+        .content {
+            padding: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+        
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            font-size: 15px;
+            background-color: #fff;
+            transition: all 0.3s;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23999' d='M10 12l-5-5 1.41-1.41L10 9.17l3.59-3.58L15 7l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #ff2442;
+            box-shadow: 0 0 0 3px rgba(255,36,66,0.1);
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ff2442 0%, #ff6b9d 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+        
+        .result {
+            margin-top: 24px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            border-top: 4px solid #ff2442;
+        }
+        
+        .result h3 {
+            margin-bottom: 16px;
+            color: #333;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .result h3::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: linear-gradient(135deg, #ff2442 0%, #ff6b9d 100%);
+            border-radius: 2px;
+        }
+        
+        .result-header {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .result-header h4, .result-content h4 {
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        #result-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        
+        #result-text {
+            white-space: pre-wrap;
+            line-height: 1.8;
+            font-size: 14px;
+            color: #444;
+            word-break: break-word;
+        }
+        
+        #copy-btn, #copy-title-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+            margin-top: 12px;
+        }
+        
+        #copy-btn:active, #copy-title-btn:active {
+            background: linear-gradient(135deg, #43A047 0%, #66BB6A 100%);
+        }
+        
+        #copy-message {
+            margin-top: 12px;
+            color: #4CAF50;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+            padding: 10px;
+            background-color: rgba(76,175,80,0.1);
+            border-radius: 8px;
+        }
+        
+        .tip {
+            margin-top: 20px;
+            padding: 16px;
+            background-color: #fff3e0;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #5d4037;
+        }
+        
+        .tip strong {
+            color: #ff7043;
+        }
+        
+        .tip ul {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .tip li {
+            margin-bottom: 8px;
+        }
+        
+        .product-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background-color: #fff;
+            border: 1px solid #ff2442;
+            color: #ff2442;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                border-radius: 12px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .content {
+                padding: 16px;
+            }
+            
+            .btn {
+                padding: 14px;
+                font-size: 15px;
+            }
+            
+            #result-title {
+                font-size: 15px;
+            }
+            
+            #result-text {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 石头科技 618 文案生成器</h1>
+            <p>一键生成爆款小红书种草文案</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-group">
+                <label for="product">选择产品型号</label>
+                <select id="product">
+                    <option value="g30s_pro">扫地机 G30S Pro 铂金版</option>
+                    <option value="p20_max">扫地机 P20 Max</option>
+                    <option value="p20_ultra_water">扫地机 P20 Ultra 活水版</option>
+                    <option value="p20_ultra_plus">扫地机 P20 Ultra Plus</option>
+                    <option value="g30_u">扫地机 G30 U</option>
+                    <option value="a30_pro_2">洗地机 A30 Pro 2.0</option>
+                    <option value="a30_pro_steam">洗地机 A30 Pro Steam 2.0</option>
+                    <option value="a30_pro_steam_5in1">洗地机 A30 Pro Steam 5合1版</option>
+                    <option value="a30_pro_steam_premium">洗地机 A30 Pro Steam 2.0尊享版</option>
+                    <option value="a30_2">洗地机 A30 2.0</option>
+                    <option value="h50_ultra">吸尘器 H50 Ultra</option>
+                    <option value="washer_m1s">洗衣机 M1S Ultra</option>
+                </select>
+            </div>
+            
+            <button class="btn" onclick="generateCopy()">✨ 生成种草文案</button>
+            
+            <div class="result">
+                <h3>生成结果</h3>
+                <div class="result-header">
+                    <h4>📝 标题</h4>
+                    <p id="result-title"></p>
+                    <button class="btn" id="copy-title-btn" onclick="copyTitle()">📋 复制标题</button>
+                </div>
+                <div class="result-content">
+                    <h4>💬 种草文案</h4>
+                    <p id="result-text"></p>
+                </div>
+                <button class="btn" id="copy-btn" onclick="copyText()">📋 复制完整文案</button>
+                <p id="copy-message">✓ 复制成功！快去小红书分享吧~</p>
+            </div>
+            
+            <div class="tip">
+                <strong>💡 使用提示：</strong>
+                <ul>
+                    <li>选择具体的产品型号</li>
+                    <li>点击「生成种草文案」按钮随机生成</li>
+                    <li>可单独复制标题或完整文案</li>
+                    <li>文案已包含话题标签，可直接使用</li>
+                    <li>建议搭配产品实拍图效果更佳</li>
+                    <li>618活动期间发布效果更好哦~</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const templates = {
+            g30s_pro: {
+                comprehensive: [
+                    {
+                        title: "救命！有了它我再也没拖过地😭",
+                        content: "姐妹们！我真的后悔没早点入石头G30S Pro铂金版！\n\n以前每天下班回家看到地上的头发和灰尘就头疼，现在好了，早上出门前按一下，晚上回家地板亮得能照镜子！\n\n最感动的是它能钻进床底和沙发底，那些我平时根本够不到的死角，它都能打扫得干干净净。1800Pa吸力真的绝，我家猫掉的毛一扫而空，再也不用蹲在地上一根根捡了。\n\n自动回洗拖布这个功能太懂懒人了，以前用别的扫地机，拖完地还要手洗拖布，现在完全不用！续航也很给力，我家140平一次扫完还有电。\n\n最近618活动真的很划算，我已经安利给闺蜜了，她用了也说香！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "懒人福音！这才是真正的解放双手👏",
+                        content: "家人们！自从入了石头G30S Pro铂金版，我家的清洁阿姨都失业了（不是）！\n\n说真的，以前打扫卫生要花一两个小时，现在完全不用管。激光导航太精准了，建图超快，连我家复杂的家具摆放都能完美避开。智能避障也很牛，我家的宠物玩具、拖鞋它都能绕着走，不会撞来撞去。\n\n噪音很小，完全不扰民，我有时候周末在家让它打扫，自己躺在沙发上追剧，两不误。APP远程控制超方便，上班路上就能让它开始打扫，回家就是干净的家。\n\n现在618活动力度很大，真的建议姐妹们冲！早买早享受，生活幸福感直接拉满！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "被闺蜜种草后，我彻底爱上了做家务😂",
+                        content: "之前对扫地机一直半信半疑，直到闺蜜给我安利了石头G30S Pro铂金版！\n\n用了一周我真的被惊艳到了！清洁力超强，厨房的油渍、客厅的零食碎屑、卧室的头发，全部一扫而空。拖地效果也超棒，拖完没有水渍，地板光亮如新。\n\n最让我惊喜的是它的智能分区清扫功能，我可以指定只打扫厨房或者只打扫卧室，太贴心了！续航也很持久，大户型完全不用担心。\n\n售后也很贴心，有问题随时找客服，安全感拉满！618活动赶紧给自己安排一台，真的会爱上做家务！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "终于找到梦中情机！这才是品质生活✨",
+                        content: "作为一个强迫症患者，我对清洁要求很高，试过很多扫地机都不满意，直到遇到石头G30S Pro铂金版！\n\n激光导航建图精准，清扫路线规划合理，覆盖率超高，不会漏扫也不会重复扫。1800Pa强劲吸力，什么垃圾都不在话下。拖地功能也很出色，自动回洗拖布，拖布永远干净。\n\n我最喜欢的是它的APP功能，定时清扫、远程控制、分区清扫，想怎么扫就怎么扫。噪音也很小，完全不影响生活。\n\n618活动太划算，早买早享受！强烈推荐给追求品质生活的姐妹们！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "有娃家庭必入！再也不用担心宝宝爬地板🤱",
+                        content: "有了宝宝后，我对家里的卫生要求特别高，生怕宝宝爬的时候吃到灰尘。石头G30S Pro铂金版真的解决了我的大问题！\n\n清洁效果超棒，地面上的饼干屑、奶粉渣都能清理干净。激光导航精准避障，不用担心它撞到宝宝的玩具。噪音很小，宝宝睡觉的时候也能打扫。\n\n自动回洗拖布功能太贴心了，不用手洗脏拖布，避免二次污染。续航持久，一次能打扫完整个家。\n\n618活动赶紧冲，给宝宝一个干净的爬行环境！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            },
+            p20_max: {
+                comprehensive: [
+                    {
+                        title: "大户型救星！这续航我能吹爆💯",
+                        content: "家人们！我家160平，石头P20 Max一次就能扫完，续航真的太顶了！\n\n以前用别的扫地机，扫一半就没电了，还要手动充电，烦都烦死了。现在好了，180分钟超长续航，整个家一次搞定，完全不用中途充电。\n\n2500Pa超强吸力，连地毯深处的灰尘都能吸出来。激光导航精准避障，建图超快，分区清扫超方便。APP远程控制，随时随地启动清洁。\n\n噪音很小，不会影响家人休息。自动回充自动洗拖布，彻底解放双手！\n\n618活动太香了，大户型的姐妹赶紧冲！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "旗舰级体验！这才是真正的扫地机天花板🔥",
+                        content: "被石头P20 Max惊艳到了！不愧是旗舰级产品！\n\n2500Pa强劲吸力，什么垃圾都能吸，连我家金毛掉的毛都能一网打尽。激光导航建图精准，清扫路线规划合理，效率超高。\n\n最让我惊喜的是它的智能感应功能，能自动识别脏污程度，自动调节吸力，太智能了！续航180分钟，大平层也能轻松搞定。\n\n操作简单，老人也能轻松上手。售后贴心，有问必答，用着放心。\n\n618活动力度超大，错过等一年！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "科技改变生活！懒人必备神器✨",
+                        content: "自从用了石头P20 Max，我彻底告别了打扫卫生！\n\n早上出门前按一下，晚上回家地板锃亮！激光导航精准避障，不会撞家具。自动回充自动洗拖布，完全不用管。\n\nAPP功能强大，定时清扫、远程控制、分区清扫都很方便。噪音小，续航长，完美！\n\n618活动赶紧安排，提升生活品质就靠它了！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "惊艳到尖叫！这清洁效果绝了😱",
+                        content: "家人们！石头P20 Max的清洁效果真的绝了！\n\n扫地拖地一体完成，地面瞬间干净，连水渍都没有。智能感应脏污程度，自动调节吸力，太智能了！\n\n续航持久，噪音小，自动回充，完美！\n\n618活动赶紧入手，真的物超所值！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "闭眼入！旗舰级扫地机的快乐谁懂啊🤩",
+                        content: "终于入了石头P20 Max，真香！\n\n清洁效果超级好，地面光亮如新。智能避障很灵敏，不会乱撞。噪音很小，不会扰民。\n\nAPP远程控制超方便，上班路上就能启动清洁。续航180分钟，大户型也不用担心。\n\n618活动太划算，赶紧给自己安排一台！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            },
+            p20_ultra_water: {
+                comprehensive: [
+                    {
+                        title: "活水清洁太香了！再也不用担心拖布发臭🤩",
+                        content: "姐妹们！石头P20 Ultra活水版真的太懂我了！\n\n以前用别的扫地机，拖布用几次就臭了，还要手洗，真的很麻烦。现在好了，活水清洁系统，边拖边洗，拖布永远干净，再也没有异味困扰！\n\n自动回洗拖布，不用手洗，懒人福音！吸力强劲，干湿垃圾一网打尽，拖地效果超棒，地面光亮如新。\n\n激光导航精准，避障灵敏，清扫路线规划合理。续航持久，噪音小，完美！\n\n618活动赶紧冲！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "黑科技加持！这款扫地机我能吹一年✨",
+                        content: "家人们！石头P20 Ultra活水版真的惊艳到我了！\n\n活水清洁技术太牛了，拖布实时清洗，清洁效果翻倍。自动集尘功能更是绝，一个月倒一次垃圾就行，太省心了！\n\n激光导航精准，避障灵敏，清扫路线规划合理。APP功能强大，定时清扫、远程控制、分区清扫都很方便。\n\n噪音很小，不会影响家人休息。售后贴心，用着放心。\n\n618活动力度超大，错过等一年！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "终于找到完美扫地机！活水清洁绝绝子💯",
+                        content: "石头P20 Ultra活水版满足了我对扫地机的所有期待！\n\n活水清洁让拖布始终干净，拖地不留水渍，地面光亮。自动回充、自动洗拖布，完全解放双手。\n\n续航持久，噪音小，APP功能强大，太好用了！\n\n618活动赶紧安排，给家里换个新装备！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "懒人必入！这才是真正的科技改变生活👏",
+                        content: "自从用了石头P20 Ultra活水版，我家再也没脏过！\n\n活水清洁技术太厉害，边拖边洗，清洁效果一流。自动集尘，一个月倒一次垃圾，太省心了。\n\n激光导航精准，智能避障，清扫效率超高。噪音小，续航持久，完美！\n\n618活动太划算，赶紧入手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "有宠物家庭必入！活水清洁太安心🐾",
+                        content: "养宠家庭看过来！石头P20 Ultra活水版真的太懂我们了！\n\n宠物掉毛、吃饭掉的碎屑，它都能清理得干干净净。活水清洁技术让拖布时刻干净，不会有异味。\n\n智能避障很灵敏，不会撞到宠物。噪音很小，不会吓到毛孩子。\n\n618活动赶紧冲，给毛孩子一个干净的家！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            },
+            p20_ultra_plus: {
+                comprehensive: [
+                    {
+                        title: "顶配版来了！这体验感绝了✨",
+                        content: "家人们！石头P20 Ultra Plus真的是顶配中的顶配！\n\n2500Pa超强吸力，激光导航精准避障，清扫效率超高。自动集尘+自动洗拖布，彻底解放双手。\n\n续航持久，噪音小，APP功能强大，太完美了！\n\n618活动力度超大，赶紧入手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "旗舰中的旗舰！这才是真正的奢华体验💯",
+                        content: "石头P20 Ultra Plus真的超出预期！\n\n功能全面，性能强悍，清洁效果一流。自动集尘、自动洗拖布、自动回充，完全不用管。\n\n激光导航建图精准，分区清扫超方便。噪音很小，不会扰民。\n\n618活动太香了，错过等一年！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "闭眼入！顶配扫地机的快乐谁懂啊🤩",
+                        content: "终于入了石头P20 Ultra Plus，真香！\n\n清洁效果超级好，地面光亮如新。自动集尘功能太赞，一个月倒一次垃圾就行。\n\nAPP远程控制超方便，上班路上就能启动清洁。续航持久，噪音小，完美！\n\n618活动赶紧安排，提升生活品质就靠它了！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "后悔没早买！这才是真正的懒人神器👏",
+                        content: "石头P20 Ultra Plus让我彻底躺平！\n\n自动集尘+自动洗拖布，完全不用动手。吸力强劲，清扫彻底，连床底都能清洁到位。\n\n续航持久，噪音小，智能避障，太完美了！\n\n618活动赶紧冲，早买早享受！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "科技感拉满！这款扫地机太懂生活了👩‍🔬",
+                        content: "被石头P20 Ultra Plus的科技感惊艳到了！\n\n自动集尘、自动洗拖布，所有功能一键搞定。激光导航精准，清扫路线规划合理，效率超高。\n\n售后服务也超贴心，有问题随时解决。\n\n618活动太划算，赶紧入手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            },
+            g30_u: {
+                comprehensive: [
+                    {
+                        title: "性价比之王！租房党必入💸",
+                        content: "姐妹们！作为一个租房党，石头G30 U真的太香了！\n\n价格亲民，品质过硬，完全不输高端款。激光导航精准，吸力强劲，清扫效果超棒。\n\n自动回充、APP控制，功能齐全。小巧灵活，搬家也方便带走。\n\n618活动超划算，租房党赶紧冲！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "入门级首选！第一次买扫地机就选对了✨",
+                        content: "第一次买扫地机就选对了！石头G30 U太香了！\n\n激光导航建图快，清扫路线合理，覆盖率高。吸力强劲，头发灰尘一扫而空。\n\n操作简单，老人也能轻松上手。售后贴心，性价比超高。\n\n618活动赶紧安排，给自己一个干净的家！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "小户型必入！这款扫地机刚刚好🏠",
+                        content: "小户型姐妹看过来！石头G30 U真的太合适了！\n\n小巧灵活，能钻各种角落。激光导航精准，清扫效率高。\n\n价格实惠，功能齐全，完全满足日常清洁需求。\n\n618活动太划算，赶紧入手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "新手友好！零门槛使用太香了😌",
+                        content: "从没用过扫地机的姐妹放心入！石头G30 U真的很容易上手！\n\nAPP操作简单，一键启动。激光导航精准，不用担心撞家具。\n\n清洁效果好，续航够用，性价比超高。\n\n618活动赶紧冲，开启懒人生活！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "学生党也能买！性价比绝绝子💯",
+                        content: "学生党看过来！石头G30 U真的太适合我们了！\n\n价格亲民，功能齐全，清洁效果超棒。激光导航、智能避障、自动回充，样样都有。\n\n噪音小，不会影响室友休息。操作简单，轻松上手。\n\n618活动太香了，赶紧给自己安排一台！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            },
+            a30_pro_2: {
+                comprehensive: [
+                    {
+                        title: "洗地机天花板！拖地再也不累了💦",
+                        content: "姐妹们！石头A30 Pro 2.0真的太好用了！\n\n以前拖地要弯腰、换水、洗拖布，累得腰酸背痛。现在好了，吸拖洗一体，一次搞定！\n\n强劲吸力，干湿垃圾都能吸。智能感应脏污，自动调节水量，太智能了！自清洁功能超方便，不用手洗拖布。\n\n轻便灵活，女生也能轻松用。噪音小，续航够长，完美！\n\n618活动赶紧冲，告别拖地噩梦！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "终于找到梦中情洗地机！懒人必入🤩",
+                        content: "被石头A30 Pro 2.0惊艳到了！\n\n吸拖洗同步进行，地面瞬间干净。自清洁功能解放双手，再也不用手洗拖布了。\n\n轻便灵活，手柄设计舒适，用久了也不累。噪音小，续航够长。\n\n618活动太划算，赶紧入手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "拖地效率提升10倍！这神器我能吹一年✨",
+                        content: "自从用了石头A30 Pro 2.0，拖地时间直接减半！\n\n吸拖洗一体，一遍就干净，不用反复拖。智能感应脏污程度，自动调节清洁模式。\n\n自清洁功能超赞，拖布洗得干干净净。轻便灵活，女生也能轻松驾驭。\n\n618活动赶紧安排，提升生活品质就靠它了！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "科技改变生活！洗地机就选这款👏",
+                        content: "石头A30 Pro 2.0真的太懂生活了！\n\n轻便灵活，操作简单，清洁效果一流。智能感应、自动调节，太省心了。\n\n售后贴心，有问必答，用着放心。\n\n618活动太香了，错过等一年！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "厨房油污克星！这款洗地机太能打了🔥",
+                        content: "家人们！石头A30 Pro 2.0真的是厨房油污克星！\n\n强劲吸力，连油污都能吸干净。吸拖洗一体，一遍就干净，不用反复擦。\n\n自清洁功能超方便，不用手洗拖布。轻便灵活，女生也能轻松用。\n\n618活动赶紧冲，告别厨房清洁噩梦！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            },
+            a30_pro_steam: {
+                comprehensive: [
+                    {
+                        title: "蒸汽除菌太香了！有宝宝家庭必入🤱",
+                        content: "家人们！石头A30 Pro Steam 2.0真的太适合有宝宝的家庭了！\n\n120℃高温蒸汽除菌，99.9%杀菌率，给宝宝一个干净的爬行环境。吸拖洗蒸一体，清洁更彻底。\n\n自清洁功能超方便，不用手洗拖布。轻便灵活，女生也能轻松用。\n\n618活动赶紧冲，给宝宝一个健康的家！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "蒸汽清洁黑科技！地面瞬间变干净✨",
+                        content: "被石头A30 Pro Steam 2.0的蒸汽功能惊艳到了！\n\n高温蒸汽不仅能清洁，还能除菌，一举两得。顽固污渍一蒸就掉，太厉害了！\n\n自清洁功能解放双手，续航够长，噪音小。\n\n618活动太划算，赶紧入手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "有宠物家庭必入！蒸汽除菌太安心🐾",
+                        content: "养宠家庭看过来！石头A30 Pro Steam 2.0真的太懂我们了！\n\n蒸汽除菌功能能有效杀灭宠物细菌，地面干净又安心。吸拖洗蒸一体，宠物毛发轻松搞定。\n\n自清洁功能超方便，再也不用手洗脏拖布了。\n\n618活动赶紧安排，给毛孩子一个干净的家！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "蒸汽洗地机天花板！这体验绝了💯",
+                        content: "石头A30 Pro Steam 2.0真的是洗地机中的战斗机！\n\n蒸汽除菌+吸拖洗一体，清洁效果一流。智能调节蒸汽量，不同地面都适用。\n\n轻便灵活，操作简单，女生也能轻松用。\n\n618活动太香了，错过等一年！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "冬季必备！蒸汽拖地太舒服了❄️",
+                        content: "冬天拖地真的太冷了！还好有石头A30 Pro Steam 2.0！\n\n高温蒸汽拖地，不仅干净还能暖脚（不是）！120℃高温除菌，地面干净又卫生。\n\n自清洁功能超方便，不用手洗拖布。轻便灵活，女生也能轻松用。\n\n618活动赶紧冲，冬天拖地再也不冷了！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            },
+            a30_pro_steam_5in1: {
+                comprehensive: [
+                    {
+                        title: "5合1全能洗地机！一台顶五台✨",
+                        content: "家人们！石头A30 Pro Steam 5合1版真的太全能了！\n\n吸尘、拖地、蒸汽除菌、自清洁、烘干一体，一台机器搞定所有清洁需求。120℃高温蒸汽，杀菌率99.9%。\n\n智能感应脏污，自动调节模式，太省心了！轻便灵活，女生也能轻松用。\n\n618活动赶紧冲，一台机器搞定所有清洁！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "全能王来了！这款洗地机我能吹一年💯",
+                        content: "石头A30 Pro Steam 5合1版真的是全能选手！\n\n蒸汽除菌、吸拖洗一体、自清洁、烘干，功能太全面了。清洁效果一流，地面光亮如新。\n\n轻便灵活，操作简单，女生也能轻松驾驭。\n\n618活动太划算，赶紧入手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "一台顶五台！这才是真正的全能洗地机👏",
+                        content: "自从用了石头A30 Pro Steam 5合1版，家里再也不用别的清洁工具了！\n\n蒸汽除菌超安心，吸拖洗一体超方便，自清洁烘干超省心。\n\n智能感应、自动调节，太智能了！\n\n618活动赶紧安排，给家里换个全能清洁助手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "惊艳到尖叫！这5合1功能太香了🤩",
+                        content: "被石头A30 Pro Steam 5合1版惊艳到了！\n\n蒸汽除菌、吸拖洗、自清洁、烘干，一台机器全部搞定。清洁效果超棒，地面像打了蜡一样亮。\n\n售后贴心，性价比超高！\n\n618活动太香了，错过等一年！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "闭眼入！这款全能洗地机太值得了🔥",
+                        content: "石头A30 Pro Steam 5合1版真的物超所值！\n\n功能全面，性能强悍，清洁效果一流。蒸汽除菌、吸拖洗一体、自清洁烘干，完美！\n\n女生也能轻松操作，再也不怕打扫卫生了。\n\n618活动赶紧冲！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            },
+            a30_pro_steam_premium: {
+                comprehensive: [
+                    {
+                        title: "尊享版来了！这体验感绝了✨",
+                        content: "家人们！石头A30 Pro Steam 2.0尊享版真的太奢华了！\n\n120℃高温蒸汽除菌，99.9%杀菌率。吸拖洗蒸一体，清洁更彻底。尊享版专属配色，颜值超高。\n\n自清洁+烘干功能，拖布不用晒。轻便灵活，操作简单。\n\n618活动赶紧冲，享受品质生活！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "尊享体验！这款洗地机太有质感了💯",
+                        content: "石头A30 Pro Steam 2.0尊享版真的超出预期！\n\n尊享版配色高级，手感超好。蒸汽除菌功能超实用，给家人一个干净的环境。\n\n自清洁+烘干，再也不用手洗拖布了。续航够长，噪音小。\n\n618活动太划算，赶紧入手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "品质生活从这款洗地机开始👏",
+                        content: "被石头A30 Pro Steam 2.0尊享版的质感惊艳到了！\n\n外观设计高级，功能全面，性能强悍。蒸汽除菌、吸拖洗一体、自清洁烘干，完美！\n\n操作简单，女生也能轻松用。售后贴心，用着放心。\n\n618活动赶紧安排，提升生活品质就靠它了！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "尊享版真香！这才是品质生活该有的样子🤩",
+                        content: "石头A30 Pro Steam 2.0尊享版真的太香了！\n\n蒸汽除菌超安心，吸拖洗一体超方便，自清洁烘干超省心。尊享版专属服务，体验感拉满！\n\n性价比超高，值得入手！\n\n618活动太香了，错过等一年！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "送礼首选！这款洗地机太有面子了🎁",
+                        content: "最近给妈妈买了石头A30 Pro Steam 2.0尊享版，她超喜欢！\n\n外观高级，功能全面，操作简单。蒸汽除菌、吸拖洗一体、自清洁烘干，妈妈用着很省心。\n\n618活动太划算，送礼自用都合适！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            },
+            a30_2: {
+                comprehensive: [
+                    {
+                        title: "性价比之王！租房党必入💸",
+                        content: "姐妹们！作为一个租房党，石头A30 2.0真的太香了！\n\n价格亲民，品质过硬，完全不输高端款。吸拖洗一体，清洁效果超棒。\n\n自清洁功能解放双手，不用手洗拖布。轻便灵活，搬家也方便带走。\n\n618活动超划算，租房党赶紧冲！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "入门级首选！第一次买洗地机就选对了✨",
+                        content: "第一次买洗地机就选对了！石头A30 2.0太香了！\n\n吸拖洗一体，一遍就干净。自清洁功能超方便，续航够长，噪音小。\n\n操作简单，老人也能轻松上手。售后贴心，性价比超高。\n\n618活动赶紧安排，给自己一个干净的家！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "小户型必入！这款洗地机刚刚好🏠",
+                        content: "小户型姐妹看过来！石头A30 2.0真的太合适了！\n\n小巧灵活，能钻各种角落。吸拖洗一体，清洁效率高。\n\n价格实惠，功能齐全，完全满足日常清洁需求。\n\n618活动太划算，赶紧入手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "新手友好！零门槛使用太香了😌",
+                        content: "从没用过洗地机的姐妹放心入！石头A30 2.0真的很容易上手！\n\n一键启动，吸拖洗同步进行。自清洁功能超方便，不用手洗拖布。\n\n清洁效果好，续航够用，性价比超高。\n\n618活动赶紧冲，开启懒人生活！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "学生党也能买！性价比绝绝子💯",
+                        content: "学生党看过来！石头A30 2.0真的太适合我们了！\n\n价格亲民，功能齐全，清洁效果超棒。吸拖洗一体、自清洁、长续航，样样都有。\n\n噪音小，不会影响室友休息。操作简单，轻松上手。\n\n618活动太香了，赶紧给自己安排一台！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            },
+            h50_ultra: {
+                comprehensive: [
+                    {
+                        title: "吸尘器天花板！这吸力太绝了✨",
+                        content: "家人们！石头H50 Ultra真的是吸尘器中的战斗机！\n\n220AW超强吸力，什么灰尘都能吸。激光探测灰尘，自动调节吸力，太智能了！\n\n轻便灵活，续航够长，噪音小。配件丰富，能清洁各种场景。\n\n618活动赶紧冲，告别手动吸尘！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "终于找到完美吸尘器！懒人必入💯",
+                        content: "被石头H50 Ultra惊艳到了！\n\n吸力超强，毛发灰尘一扫而空。激光探测灰尘，自动调节吸力，清洁更精准。\n\n轻便灵活，女生也能轻松用。续航够长，配件丰富。\n\n618活动太划算，赶紧入手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "科技感拉满！这款吸尘器太懂生活了👏",
+                        content: "石头H50 Ultra真的太懂生活了！\n\n激光探测灰尘功能太牛了，哪里脏扫哪里。220AW超强吸力，清洁效果一流。\n\n轻便灵活，操作简单，续航够长。\n\n618活动赶紧安排，提升生活品质就靠它了！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "惊艳到尖叫！这吸尘器真的太能打了🤩",
+                        content: "石头H50 Ultra真的超出预期！\n\n吸力强劲，激光探测灰尘，自动调节吸力，太智能了！配件丰富，能清洁地板、沙发、床品。\n\n轻便灵活，噪音小，续航够长。\n\n618活动太香了，错过等一年！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "床品清洁神器！再也不用担心螨虫了🛏️",
+                        content: "家人们！石头H50 Ultra真的是床品清洁神器！\n\n强劲吸力，能吸走床品里的灰尘和螨虫。激光探测灰尘，自动调节吸力，清洁更精准。\n\n配件丰富，除螨刷头超好用。轻便灵活，女生也能轻松用。\n\n618活动赶紧冲，给家人一个健康的睡眠环境！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            },
+            washer_m1s: {
+                comprehensive: [
+                    {
+                        title: "洗衣机黑科技！这洁净力太绝了✨",
+                        content: "家人们！石头洗衣机M1S Ultra真的太牛了！\n\n12kg超大容量，热泵烘干，洗烘一体。DD直驱电机，静音又稳定。\n\n智能投放洗衣液，不用每次手动加。多种洗涤模式，满足各种需求。\n\n618活动赶紧冲，告别洗衣烦恼！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "终于找到完美洗衣机！懒人必入💯",
+                        content: "被石头M1S Ultra惊艳到了！\n\n洗烘一体太方便了，洗完直接烘干，再也不用晾衣服了。12kg大容量，全家衣物一次搞定。\n\nDD直驱电机静音，晚上洗衣服也不怕吵。智能投放，太省心了！\n\n618活动太划算，赶紧入手！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "科技改变生活！这款洗衣机太懂我了👏",
+                        content: "石头M1S Ultra真的太懂生活了！\n\n洗烘一体、智能投放、大容量、静音，完美！热泵烘干不伤衣，衣物蓬松柔软。\n\n操作简单，老人也能轻松上手。售后贴心，用着放心。\n\n618活动赶紧安排，提升生活品质就靠它了！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "惊艳到尖叫！这洗衣机真的太能打了🤩",
+                        content: "石头M1S Ultra真的超出预期！\n\n洗烘一体超方便，12kg大容量，DD直驱静音。智能投放洗衣液，不用每次手动加。\n\n多种洗涤模式，羊毛、羽绒都能洗。热泵烘干不伤衣，衣物蓬松柔软。\n\n618活动太香了，错过等一年！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    },
+                    {
+                        title: "梅雨季节救星！洗烘一体太香了🌧️",
+                        content: "南方的姐妹们！石头M1S Ultra真的是梅雨季节救星！\n\n洗烘一体，洗完直接烘干，再也不用担心衣服晾不干发霉了。热泵烘干不伤衣，衣物蓬松柔软。\n\n12kg大容量，全家衣物一次搞定。DD直驱静音，晚上洗衣服也不怕吵。\n\n618活动赶紧冲，告别梅雨烦恼！\n\n#石头 618 体验购#G30SPro铂金版#石头品质生活"
+                    }
+                ]
+            }
+        };
+        
+        function generateCopy() {
+            const product = document.getElementById('product').value;
+            const templateList = templates[product].comprehensive;
+            const randomIndex = Math.floor(Math.random() * templateList.length);
+            const selectedTemplate = templateList[randomIndex];
+            document.getElementById('result-title').textContent = selectedTemplate.title;
+            document.getElementById('result-text').textContent = selectedTemplate.content;
+        }
+        
+        function copyText() {
+            const title = document.getElementById('result-title').textContent;
+            const content = document.getElementById('result-text').textContent;
+            const fullText = title + '\n\n' + content;
+            if (fullText) {
+                copyToClipboard(fullText);
+            }
+        }
+        
+        function copyTitle() {
+            const title = document.getElementById('result-title').textContent;
+            if (title) {
+                copyToClipboard(title);
+            }
+        }
+        
+        function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopyMessage();
+                }).catch(err => {
+                    fallbackCopyTextToClipboard(text);
+                });
+            } else {
+                fallbackCopyTextToClipboard(text);
+            }
+        }
+        
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showCopyMessage();
+                }
+            } catch (err) {
+                console.error('复制失败:', err);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        function showCopyMessage() {
+            const message = document.getElementById('copy-message');
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
+        }
+        
+        window.onload = function() {
+            generateCopy();
+        };
+    </script>
+</body>
+</html>
